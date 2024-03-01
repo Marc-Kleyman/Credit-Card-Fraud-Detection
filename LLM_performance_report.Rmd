@@ -50,14 +50,6 @@ n_duplicate <- sum(table(clean_data$model_name_for_query) > 1)
 
 ## Introduction {.unnumbered}
 
-```{=html}
-<!-- An Introduction
-Your introduction should present a research question and motivate its importance. It should draw the reader’s attention to specific X and Y concepts in a way that makes the reader care about them. After reading the introduction, the reader should be prepared to understand why the models are constructed the way that they are. It is not enough to simply say, “We are looking for product features that enhance product success.” Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also a good time to put your work into context, discuss crosscutting issues, and assess the overall appropriateness of the data.
--->
-
-<!-- Mark's Extra Guidance
-Take a perspective as to who you are who is your client. Why is your client engaging you. What is your research thesis. Take a position as to x drives changes in Y in what way. Involve at least conceptually your treatment X, output Y. Mention covariates. No fishing statements Propose an initial causal path diagram for your research   -->
-```
 With the release of ChatGPT and the surge in AI adoption, many companies are searching for feasible large language model solutions to solve their problems. Many small-cap and mid-cap companies are unable to dedicate the resources necessary to work on this endeavor themselves, so they are seeking help from some of the top consulting firms in the nation. An industry research study performed by Future Market Insights shows that the AI Consulting industry has a market size of roughly \$525 billion in 2023[^1] and will most likely continue to grow.
 
 [^1]: Global AI Consulting Services Market Outlook (2023 to 2033).[Future Market Insights](https://www.futuremarketinsights.com/reports/ai-consulting-services-market/)
@@ -93,15 +85,6 @@ Below is our initial causal path diagram for our research:
 
 ## Data and Methodology {.unnumbered}
 
-```{=html}
-<!-- 2. A Brief Description of the Data
-You should assume that your reader is not familiar with the data you are using. Provide basic information such as the organization that collected the data, whether it is experimental or observational, and how units of observation were selected.
--->
-
-<!-- Mark's Extra Guidance
-Mention how you are going to split data into train and confirmation sets
--->
-```
 In our analysis, we utilize Open LLM Performance Benchmark data[^2], which is a survey of `r original_count` Comprehensive Language Model Evaluation Metrics that is updated from the HuggingFace leader board[^3] as of October 16th, 2023. HuggingFace is a platform and open-source provider of machine learning technologies. It allows users to share datasets and machine learning models, and showcase their work. The HuggingFace Open LLM Leaderboard tracks and ranks evaluations of LLMs using benchmarks from the Eleuther AI Language Model Evaluation Harness. The unit of observation in this dataset is one singular LLM. The goal of this analysis is to determine which LLM is best for inference and are varying tuning `Type` (X) to have a positive impact on `Average Score` (Y). We can only present one model to the client, so we cannot use multiple models or parts of a model as our unit of observation.
 
 [^2]: Open LLM Performance Benchmark.[Open LLM performance Dataset](https://www.kaggle.com/datasets/itsraghul/open-llm-performance-dataset/)
@@ -115,28 +98,9 @@ explore_percentage <- 0.7
 
 We performed all exploration and model building on a `r explore_percentage * 100`% subsample of the data. The remaining `r (1 - explore_percentage) * 100`%, totaling `r round(n_no_na * (1 - explore_percentage), 0)` rows, was used to generate the statistics in this report.
 
-```{=html}
-<!-- 3. A Discussion of How Key Concepts are Operationalized You should explain which variables are used to represent your X and your Y, and how well they
-match these concepts. Identify key gaps between the conceptual and operational definitions. If there are alternative variables that you considered, highlight them and explain how you made your decision
--->
-
-<!-- Mark's Extra Guidance
-Clear operational definitions of concept to operation. So, emphasize the match between concepts and actual features used (table).
--->
-```
 Tuning type is operationalized by the X variable `Tuning Type`, which is a nominal variable with four classes: Instruction-Tuned, Fine-Tuned, Pretrained, and Reinforcement Learning-Tuned. The X concept refers to the weight calibration method that was used to guide the large language model's training after it was pretrained on a dataset. `Tuning Type` was one-hot encoded to calculate correlations and allow for identification of OVB. Model quality is operationalized by the Y variable `Average score`, which is an average score (between 1 and 100) across four benchmarks that measure different aspects of the quality of an LLM's outputs. Each LLM goes through all four benchmarks and the benchmarks each measure a different aspect of the quality of the LLM's outputs: `ARC` (question-answering abilities), `HellaSwag` (common sense reasoning), `MMLU` (language understanding), and `TruthfulQA` (truthfulness). The scores in each benchmark are metric and continuous and are determined by giving the large language model a series of questions and calculating the percentage of questions the model gets correct. The average score for each LLM is the simply the mean of the four percentage scores.
 
-```{=html}
-<!-- 4. An Explanation of Key Modeling Decisions
-1. How many observations were removed from the data, and for what reasons?
-2. What transformations did you apply to your variables and why? Are they supported by scatterplots, statistical tests, or existing theory?
-3. Are there covariates that were intentionally left out of your models and why? For example, did they reduce your precision too much, or are they outcome variables?
--->
 
-<!-- Mark's Extra Guidance
-Accounting table is required. Perform EDA. Emphasis on what supports the use of transformations, if you performed them.
--->
-```
 ```{r make summary table}
 # Create the data frame
 accounting_table <- data.frame(
@@ -163,19 +127,6 @@ kable(
 
 As we report in Table \@ref(tab:Accounting-table), we removed `r n_na` models with missing `Type`, leaving `r n_no_na` models. Each row represents a single LLM. Each LLM is evaluated on the test dataset of each benchmark, and the residuals are aggregated within each benchmark to compute the score for that benchmark for that LLM. There are `r n_unique` unique LLMs in the dataset, with a `r n_duplicate` LLMs being benchmarked repeatedly.
 
-```{=html}
-<!-- 5. A Table or Visualization
-You will be graded on your visual design. In particular:
-1. Plots should be easy to navigate, with useful titles and axis labels.
-2. Do not include raw R output. All output, including variable names, should be formatted to make it easy for an English speaker to read.
-3. Plots should have a high information-to-ink ratio. If you are only communicating 2-4 numbers, a table is generally more effective than a plot.
-4. Any plot or table you include must be commented on in your narrative. In other words, no output dumps
--->
-
-<!-- Mark's Extra Guidance
-Emphasis. Plot and tables are important. Beyond all the quality issues, every graph or table must have an accompanying reason for its inclusions and particular placement in the paper. Multiple visuals showing the same observation are not to be used. If comparisons are made make sure the tables or visual are structured to be compared by the reader. No code display is necessary or appropriate.
--->
-```
 ```{r assess-multicolinearity-assumption, include=FALSE, echo=FALSE}
 #install.packages("corrplot")
 library(corrplot)
@@ -419,16 +370,6 @@ plot_residuals <- function(data, model, model_name) {
 plot_residuals(train_data, model1, "Model 1") | plot_residuals(train_data, model2, "Model 2") | plot_residuals(train_data, model3, "Model 3")
 
 ```
-
-```{=html}
-<!-- 6. A Well-Formatted Regression Table.
-It is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you’re not just cherry-picking the specification that leads to the largest effects. You should display all of your model specifications in a regression table, using a package like stargazer to format your output. It should be easy for the reader to find the coefficients that represent key effects near the top of the regression table, and scan horizontally to see how they change from specification to specification. Make sure that you display the most appropriate standard errors in your table. As you select your model specification, your goal is to encircle the space of reasonable modeling choices, and to give an overall understanding of how these choices impact results. You should strive to make your models different from each other. However, each individual model must be defensible. At a minimum, you need to estimate at least three model specifications. The first model you create should include only the key variables you want to measure. These variables might be transformed, as determined by your EDA, but the model should include the absolute minimum number of covariates (usually zero or one covariate that is so crucial it would be unreasonable to omit it). The structure of the other models is more flexible. Most often, you will see researchers add a block of covariates from one model to the next. Each model should be defensible, and should continue to tell the story of how product features contribute to product success. This might mean including additional covariates to remove omitted variable bias; or, instead, it might mean estimating a model that operationalizes your X or Y in a different way (be sure the operationalization is substantially different). You may also create a model tailored to investigating a heterogeneous effect.
--->
-
-<!-- Mark's Extra Guidance
-Up to this point use the train data set. This table is to be run on the confirmation data set. Model 1. treatment and output. Model 2. Model 1 plus covariates you think most important. No more than 5 covariate concepts (dummies not counted as individual concepts). Model 3. Kitchen sink.
--->
-```
 ```{r}
 # # Generate predictions for the test data
 # test_data$pred_model1 <- predict(model1, newdata = test_data)
@@ -563,15 +504,7 @@ residual_plot <- function(data, model, model_name) {
 res_plot <- residual_plot(train_data, model3, "Model 3")
 ```
 
-```{=html}
-<!-- 7. A Discussion of Results
-In your text, comment on both statistical significance and practical significance. You may want to include statistical tests besides the standard t-tests for regression coefficients. Here, it is important that you make clear to your audience the practical significance of any model results. How should the product change as a result of what you have discovered? Are there limits to how much change you are proposing? What are the most important results that you have discovered, and what are the least important?
--->
 
-<!-- Mark's Extra Guidance
-As part of practical significance refer back to your purpose for your client and your thesis. How do they compare? Discussion the salient material from the stargazer. What surprised you, what did not? Interpret the coefficient of your treatment variable. Do you think your client could or should use this to manipulate the process?
--->
-```
 ```{r, include=FALSE}
 summary_model3 <- summary(model3)
 coefficients_table_model3 <- summary_model3$coefficients
@@ -658,19 +591,6 @@ All of the one hot encoded tuning categories were found to have statistically si
 
 ## Limitations {.unnumbered}
 
-```{=html}
-<!-- 8. A Discussion of Limitations
-8a. Statistical limitations of your model Make sure to evaluate all of the large sample model assumptions (or the CLM if you have a small sample). However, you do not necessarily want to discuss every assumption in your report. Instead, highlight any assumption that might pose significant problems for your analysis. For any violations that you identify, describe the statistical consequences. If you are able to identify any strategies to mitigate the consequences, explain these strategies. Note that you may need to change your model specifications in response to violations of the large sample model.
-
-8b. Structural limitations of your model What are the most important omitted variables that you were not able to include? For each variable you name, reason about the direction of bias caused by omitting this variable and whether the omission of this variable calls into question the core results you are reporting. Is there a possibility of reverse causality? If so, reason about the direction of bias this causes. Are there any outcome variables on the right hand side? If so, reason about the direction of bias this causes.
--->
-
-<!-- Mark's Extra Guidance
-Even if you are claiming large sample model assumptions, I expect you to evaluate the CLM assumptions and highlight in your paper examplar (not all) assumptions that might pose significant problems for your analysis. Convince me that you understand where you might start to improve your model.
-
-Provide two OVB thought experiments (unused covaiates) versus the treatment variable. Assume that the treatment estimated coefficient represents βr and using the OVB analysis we have discussed to tell me why and in what direction βr will move in moving towards βc . Provide an updated causal pathway diagram which you believe represent your findings.
--->
-```
 Regarding IID assumptions, the identical distribution assumption may be challenged since the LLMs aren't required to share a common architecture. The independence assumption may be challenged since LLMs built by the same developer may have similar scores, but we removed any duplicate LLMs with the same model name. Overall, we can assume IID is violated.
 
 The VIF for all coefficients were between 1 and 2 except for 16-bit floats and 16-bit bfloats, which have a VIF of roughly 9. This indicates that there is no multicollinearity except with 16-bit floats and 16-bit bfloats. Because the VIF is greater than 4, we can assume there is moderate collinearity.
@@ -693,20 +613,6 @@ The four LLM performance benchmark tests may not perfectly encapsulate what the 
 
 ## Conclusion {.unnumbered}
 
-```{=html}
-<!-- 9. A Conclusion
-Make sure that you end your report with a discussion that distills key insights from your work, addresses your research question, and leaves the reader with a sense of broader context or impact.
--->
-
-<!-- Mark's Extra Guidance
-Plus where would you seek learning in a future analysis of the topic
--->
-```
-```{=html}
-<!-- Mark's Extra Guidance
-10 Reference Section (A section is optional, references are not).
--->
-```
 Our research demonstrates the positive impact of all tuning types for optimizing model performance while Instruction Tuning shows the most significant impact. We recommend building a larger model with more parameters since increasing the number of parameters had a positive impact on the average score. Additionally, we recommend avoiding 8-bit precision due to its negative influence on the Average Score.
 
 Moving forward, we believe exploring tuning strategies inspired by instruction or combined tuning strategies are promising avenues for future research.
