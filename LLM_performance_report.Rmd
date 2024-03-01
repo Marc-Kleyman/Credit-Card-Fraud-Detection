@@ -1,6 +1,5 @@
 ---
 title: 'Analyzing Open LLM Performance'
-subtitle: "Datasci 203: Lab 2 Final Report"
 author: "Team MMA - Mohamed Bakr, Marc Kleyman, Ankit Dey"
 date: "2023-10-19"
 output:
