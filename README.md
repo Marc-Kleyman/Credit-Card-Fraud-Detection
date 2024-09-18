@@ -1,3 +1,2 @@
-# Projects
-Project Github Repo
+# Credit Card Fraud Detector
 Copyright Marc Kleyman 2024
